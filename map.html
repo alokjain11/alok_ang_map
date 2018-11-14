@@ -1,0 +1,1160 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Tracker.aspx.cs" Inherits="CRM_Tracker" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Tracker</title>
+
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCT5Y80JAPan_xGH6b3reefEyjOZY7c-N8"></script>
+
+    <%--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAr9J7fjbm4hC9TLMt0hLhJ-Hv5A3bahdA"></script>--%>
+
+    <script src="angular/angular.js"></script>
+    <script src="bower_components/angular/ng-map.js"></script>
+    <link href="bower_components/angular-bootstrap/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="bower_components/jquery/jquery.min.js"></script>
+
+    <script src="bower_components/angular-bootstrap/bootstrap.min.js"></script>
+
+
+    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+
+    <style>
+        body {
+            font-size: 9px;
+        }
+
+        label {
+            display: inline-block;
+            max-width: 87%;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .modal-dialog {
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        .inputText {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #ECF6FB;
+            box-shadow: 1px 1px 1px 1px #ccc;
+            color: #0090ff;
+        }
+
+        .scrollbox {
+            height: 500px;
+            overflow-x: scroll;
+            border: 1px solid;
+        }
+
+
+
+        .grid-item:hover {
+            opacity: 0.5;
+        }
+
+
+        select#soflow {
+            -webkit-appearance: button;
+            -webkit-border-radius: 2px;
+            -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+            -webkit-padding-end: 20px;
+            -webkit-padding-start: 2px;
+            -webkit-user-select: none;
+            background-image: -webkit-linear-gradient(#FAFAFA, #F4F4F4 40%, #E5E5E5);
+            background-position: 97% center;
+            background-repeat: no-repeat;
+            border: 1px solid #AAA;
+            color: #555;
+            font-size: inherit;
+            margin: 20px;
+            overflow: hidden;
+            padding: 5px 10px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 150px;
+        }
+    </style>
+</head>
+
+<body ng-app="myApp" ng-controller="myCntrl">
+    <form id="form1" runat="server">
+
+        <div class="panel panel-primary">
+            <%-- <div class="panel-heading">
+                Tracker Details
+              
+
+            </div>--%>
+
+            <asp:HiddenField ID="u_id" runat="server" />
+            <div class="panel-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <div class="row">
+                            <div>
+                                <div class="row grid">
+
+                                    <a ng-click="livestatus_click('NotAssigned',1,0,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-info">
+                                                <strong>
+                                                    <center>Not Assigned</center>
+                                                </strong>
+
+                                                <center>{{Livestatusds.NotAssigned}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('offline',1,0,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-warning">
+                                                <strong>
+                                                    <center>offline!</center>
+                                                </strong>
+                                                <center>{{Livestatusds.Offline}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a ng-click="livestatus_click('Online',1,0,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-success">
+                                                <strong>
+                                                    <center>Online</center>
+                                                </strong>
+                                                <center>{{Livestatusds.Online}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+
+                                    <a ng-click="livestatus_click('OnTime',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-info">
+                                                <strong>
+                                                    <center>OnTime Add</center>
+                                                </strong>
+                                                <center>{{Livestatus_cancelds.OnTime}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <a ng-click="livestatus_click('Late',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-danger">
+                                                <strong>
+                                                    <center>Late Add</center>
+                                                </strong>
+                                                <center>
+                                                    {{Livestatus_cancelds.Late}}
+                                                                      </center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('Pending',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-success">
+                                                <strong>
+                                                    <center>Pending order</center>
+                                                </strong>
+                                                <center>{{dashboard.PendingPickUp}} </center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+
+
+
+
+
+
+
+
+
+                                </div>
+                                <!-- row -->
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="row" style="margin-left: 1px;">
+                            <div>
+                                <div class="row grid">
+
+                                    <a ng-click="livestatus_click('TotalCancelled',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-warning">
+                                                <strong>
+                                                    <center>Total Can order</center>
+                                                </strong>
+                                                <center> {{Livestatus_cancelds.TotalCancelled}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('LateCancel',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-info">
+                                                <strong>
+                                                    <center>Late Can order</center>
+                                                </strong>
+                                                <center> {{Livestatus_cancelds.LateCancel}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('Reschedule',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-success">
+                                                <strong>
+                                                    <center>Reschedule order</center>
+                                                </strong>
+                                                <center> {{Livestatus_cancelds.Reschedule}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('TotalCancelledAddress',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-warning">
+                                                <strong>
+                                                    <center>Add Can</center>
+                                                </strong>
+                                                <center>{{Livestatus_cancelds.TotalCancelledAddress}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+                                    <a ng-click="livestatus_click('RecentlyCancelled',0,1,userid)" style="cursor: pointer">
+                                        <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card grid-item ">
+                                            <div class="alert-danger">
+                                                <strong>
+                                                    <center>Recently Can</center>
+                                                </strong>
+                                                <center>{{Livestatus_cancelds.RecentlyCancelled}}</center>
+                                            </div>
+                                        </div>
+                                    </a>
+
+
+
+                                    <div class="col-xs-12 col-sm-1 col-md-1 col-lg-1 col-xl-1 card  ">
+                                        <div class="alert-info">
+                                            <strong>
+                                                <center>Add : </center>
+                                            </strong>
+                                            <center>{{dashboard.CompletedPickUpAddress}} / {{dashboard.TotalPickupAddress}} </center>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-xs-12 col-sm-1 col-md-1 col-lg-1 col-xl-1 card  ">
+                                        <div class="alert-success">
+                                            <strong>
+                                                <center>order : </center>
+                                            </strong>
+                                            <center>{{dashboard.CompletedPickUp}} / {{dashboard.TotalPickup}}</center>
+                                        </div>
+                                    </div>
+
+
+
+
+
+
+                                </div>
+                                <!-- row -->
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+                <br />
+
+                <div class="col-md-12 ">
+
+                    <div class="col-md-2 ">
+                        <div class="row">
+                            <input type="button" class="btn-danger text-left" value="{{btntxt}}" ng-click="timeron_off()" />
+                            <input type="button" class="btn-info text-right" value="Clear" ng-click="Clear_click()" />
+                        </div>
+                        <div class="row">
+
+
+                            <label>
+                                RM 
+                            </label>
+
+                            <select id="soflow" ng-model="userid" ng-change="RM_change(userid)">
+                                <option value="0" ng-if="RMID==728">All</option>
+                                <option ng-repeat="r in RMds" value="{{r.userid}}">{{r.u_name}}</option>
+
+                            </select>
+
+
+
+
+                        </div>
+
+                        <div class="scrollbox">
+                            <%--<div class="checkbox">
+                                <input type="checkbox" name="currency" id="chk-all" ng-model="selectAll" ng-change="toggleAll()" />
+                                <label for="chk-all">Select All</label>
+                            </div>--%>
+
+
+
+                            <div class="list-group" id="list1">
+                                <b class="list-group-item active">
+                                    <center><b>Phlebotomist </b> {{SelectedPLenth}} 
+                                
+
+                                    </center>
+                                    <input type="text" ng-model="phleboname" class="inputText" placeholder="Search..">
+                                </b>
+                                <div class="list-group-item" ng-repeat="p in phlebotomisticds  | filter:phleboname ">
+                                    <input type="checkbox" name="userid" id="chk-{{p.userid}}" ng-model="p.selected" ng-value="userid" ng-change="togglephlebotomistic($index,p.userid)" />
+                                    <label title="{{p.userid}}" for="chk-{{p.userid}}">{{p.u_name}}</label>
+
+                                    <div ng-if="current_statusChk == 'Online'">
+                                        <img class="right" style="width: 10px; height: 10px;" src="imgMap/status/green.png" />
+                                    </div>
+
+                                    <div class="right" ng-if="current_statusChk == 'offline'">
+                                        <img style="width: 10px; height: 10px;" src="imgMap/status/yellow.png" />
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <%--<div class="checkbox checkbox-inline col-sm-12" ng-repeat="p in phlebotomisticds">
+                                <input type="checkbox" name="userid" id="chk-{{p.userid}}" ng-model="p.selected" ng-value="userid" ng-change="togglephlebotomistic($index,p.userid)" />
+                                <label for="chk-{{p.userid}}">{{p.u_name}}</label>
+                            </div>--%>
+                        </div>
+                    </div>
+
+                    <div class="col-md-10 ">
+                        <div class="row">
+
+                            <ng-map id="mapmain" center="[{{center_mainmap_lat}},{{center_mainmap_long}}]" style="height: 580px;" zoom="10">
+
+                                      <marker   id="ofc1" icon="{{officeicon1}}" title="Head office" position="{{office1_lat}},{{office1_long}}"  on-click="officeDetails1(event)" >
+                                      </marker>
+
+                                 <marker  id="ofc2" icon="{{officeicon2}}" title="office" position="{{office2_lat}},{{office2_long}}"  on-click="officeDetails2(event)" >
+                                      </marker>
+
+                                <marker  id="ofc3" icon="{{officeicon2}}" title="office" position="{{office3_lat}},{{office3_long}}"  on-click="officeDetails3(event)" >
+                                      </marker>
+
+                               
+
+                               
+
+                          <div ng-repeat="i in getNumber(number) track by $index">
+                                
+                               <div ng-repeat="p in count[$index] track by $index">
+                                  
+                        
+                                     <marker  id="home{{$index+1}}" icon="{{Homeicon1}}" position="{{p.PhleboHomeLat}},{{p.PhleboHomeLong}}" title="{{p.PhleboName}}"  >
+                                      </marker>
+
+                 <div ng-if="p.PickUpStatus == 'OnGoing'">
+                      <marker title="P{{$parent.$parent.$index+1}}_{{p.OrderSequence}}"   id="{{p.o_id}}OnGoing" icon="{{OnGoing[$parent.$parent.$index+1]}}"  position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}" on-click="oneorderDetails(event, p)" ></marker>
+                 </div>
+                 <div ng-if="p.PickUpStatus == 'Completed'">
+                    
+                      <marker title="P{{$parent.$parent.$index+1}}_{{p.OrderSequence}}"   id="{{p.o_id}}Completed" icon=" {{Completed[$parent.$parent.$index+1]}}"  position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}" on-click="oneorderDetails(event, p)" ></marker>
+                 </div>
+                 <div ng-if="p.PickUpStatus == 'NotCmpleted'">
+                      <marker title="P{{$parent.$parent.$index+1}}_{{p.OrderSequence}}"   id="{{p.o_id}}NotCmpleted" icon="{{NotCmpleted[$parent.$parent.$index+1]}}"  position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}" on-click="oneorderDetails(event, p)" ></marker>
+                 </div>
+                 <div ng-if="p.PickUpStatus == 'Cancelled'">
+                      <marker title="P{{$parent.$parent.$index+1}}_{{p.OrderSequence}}"   id="{{p.o_id}}Cancelled" icon="{{Cancelled[$parent.$parent.$index+1]}}"  position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}" on-click="oneorderDetails(event, p)" ></marker>
+                 </div>
+
+                                   <div ng-if="p.PickUpStatus == 'Reschedule'">
+                     <marker title="P{{$parent.$parent.$index+1}}_{{p.OrderSequence}}"   id="{{p.o_id}}Reschdule" icon="{{Reschdule[$parent.$parent.$index+1]}}"  position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}" on-click="oneorderDetails(event, p)" ></marker>
+					
+                 </div>
+           
+
+            <custom-marker id="lblep1" position="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}">
+						<div><b  ng-style="{color:colors[$parent.$index+1]}"><h5>{{p.OrderSequence}}</h5></b>  </div>
+					</custom-marker>
+
+
+            <shape name="polyline" 
+      path="{{path[$parent.$index]}}"
+      geodesic="true"
+      stroke-color="{{colors[$parent.$index+1]}}"
+      stroke-opacity="1.0"
+      stroke-weight="2">
+    </shape>
+
+                 <div ng-if="P_Late[$parent.$index+1]=='YES'">
+                       <marker   id="v1{{$index}}Y" icon="{{vichles_late[$parent.$parent.$index+1]}}" title="Late"  position="{{p.lat}},{{p.logi}}"  on-click="bykeDetails(event,p)" ></marker>
+
+                       <custom-marker id="lbllateP1" position="{{p.lat}},{{p.logi}}">
+						<div><b>{{P_Late_Time[$parent.$index+1]}} </b>  </div>
+					</custom-marker>
+
+                 </div>
+                   <div ng-if="P_Late[$parent.$index+1]=='NO'">
+                       <marker   id="v1{{$index}}N" icon="{{vichles[$parent.$parent.$index+1]}}" title="on Time"  position="{{p.lat}},{{p.logi}}"  on-click="bykeDetails(event,p)" ></marker>
+                 </div>
+            
+
+
+                  <div ng-if="p.PickUpStatus == 'OnGoing'">
+            <directions travel-mode="DRIVING" panel="" 
+                  avoid-ferries="true draggable="true"  suppress-markers="true" 
+          origin="{{p.lat}},{{p.logi}}"
+          destination="{{p.a_geo_latitude}}, {{p.a_geo_longitude}}">
+        </directions>
+
+                      </div>
+
+        </div>
+                                </div>  
+                               
+
+
+
+                            </ng-map>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div>
+            <div ng-if="orgGrid_details == true && points.length>0">
+                <div class="row grid">
+
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card ">
+                        <div class="alert-success">
+                            <strong>
+                                <center>Total</center>
+                            </strong>
+
+                            <center>{{p_Total_count}}</center>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card ">
+                        <div class="alert-warning">
+                            <strong>
+                                <center>Complted</center>
+                            </strong>
+
+                            <center>{{p_complted_count}}</center>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card ">
+                        <div class="alert-danger">
+                            <strong>
+                                <center>Cancelled</center>
+                            </strong>
+
+                            <center>{{p_Cancelled_count}}</center>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card ">
+                        <div class="alert-info">
+                            <strong>
+                                <center>Reschedule</center>
+                            </strong>
+
+                            <center>{{p_Reschedule_count}}</center>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card ">
+                        <div class="alert-success">
+                            <strong>
+                                <center>Ongoing</center>
+                            </strong>
+
+                            <center>{{p_ongoing_count}}</center>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2 card  ">
+                        <div class="alert-info">
+                            <strong>
+                                <center>Not Complted</center>
+                            </strong>
+
+                            <center>{{p_NotComplted_count}}</center>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel-body">
+            <asp:HiddenField ID="hdnAgentID" runat="server" />
+
+
+            <div ng-if="orgGrid_details == true && points.length>0">
+                <table class="table table-hover">
+
+                    <thead>
+
+
+                        <tr class="info">
+                            <th>SrNo.</th>
+                            <th>Phlebo</th>
+                            <th>PhleboMobileNo</th>
+                            <%--  <th>customer Name</th>
+                        <th>CustomerMobileNo</th>--%>
+                            <th>pickupaddress</th>
+                            <th>pickuptime</th>
+                            <th>PickUpStatus</th>
+                            <th>Byke Lat</th>
+                            <th>Byke long</th>
+
+                            <th>Phlebo Reached Time</th>
+                            <th>Reached Time Diff</th>
+
+                            <th>History</th>
+                            <th>Live Direction</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr ng-repeat="p in points" ng-class="{'success': p.PICKUPSTATUSColor == 'CO' ,'danger': p.PICKUPSTATUSColor == 'CA','warning': p.PICKUPSTATUSColor == 'PC' }">
+                            <td>{{$index+1}} </td>
+                            <td><b title="{{p.PhleboId}}">{{p.PhleboName}}</b> </td>
+                            <td>
+                                <center>
+                               <img src="../Images/phone icon.png"  alt="" title="{{p.PhleboMobileNo}}" style="height: 20px; cursor: pointer; width: 20px" ng-click="send_parameters('22149',p.PhleboMobileNo)">
+                           </center>
+                            </td>
+                            <%--<td>{{p.customer_name}} </td>
+                        <td>
+
+                            <center>
+                            <img src="../Images/Web-icon.png" alt="" title="{{p.CustomerMobileNo}}" style="height: 20px; cursor: pointer; width: 20px" ng-click="send_parameters('22149',p.CustomerMobileNo )">
+                                  </center>
+
+                        </td>--%>
+                            <td>
+                                <a style="cursor: pointer;" ng-click="Cus_Details_click(p.cm_id)">{{p.pickupaddress}} 
+                                </a>
+
+
+                            </td>
+                            <td>{{p.pickuptime}} </td>
+                            <td>{{p.PickUpStatus}}
+
+                                <div ng-if="p.PICKUPSTATUSColor == 'CA'">
+                                    <img style="width: 20px; height: 20px;" src="imgMap/status/rad.png" />
+                                </div>
+                                <div ng-if="p.PICKUPSTATUSColor == 'PC'">
+                                    <img style="width: 20px; height: 20px;" src="imgMap/status/rad.png" />
+                                </div>
+
+                            </td>
+                            <td>{{p.lat}} </td>
+                            <td>{{p.logi}} </td>
+
+                            <td>{{p.Phlebo_Reached_Time}} </td>
+                            <td>{{p.ReachedTimeDiff}} </td>
+
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" ng-click="Phlibo_timing_click(p.PhleboId)">View History</button>
+
+
+
+                            </td>
+                            <td>
+                                <%-- <button ng-if="p.PickUpStatus == NotCmpleted" type="button" class="btn btn-info btn-lg" data-toggle="modal" ng-click="model_click(p)">View Direction</button>--%>
+
+
+                                <button type="button" ng-if="p.PickUpStatus == 'NotCmpleted'" class="btn btn-danger btn-sm" data-toggle="modal" ng-click="model_click(p)">View Direction</button>
+                                <button type="button" ng-if="p.PickUpStatus == 'OnGoing'" class="btn btn-success btn-sm" data-toggle="modal" ng-click="model_click(p)">View Direction</button>
+
+                            </td>
+
+
+                        </tr>
+
+
+
+                    </tbody>
+                </table>
+            </div>
+
+
+            <%--GridDetails--%>
+
+
+
+            <table class="table table-hover" ng-if="orgGrid_details == false">
+
+                <thead>
+
+
+                    <tr class="info">
+
+                        <th>SrNo.</th>
+                        <th>Phlebo</th>
+                        <th>PhleboMobileNo</th>
+                        <th>customer_name</th>
+                        <th>CustomerMobileNo</th>
+                        <th>pickupaddress</th>
+                        <th>pickuptime</th>
+
+                        <th>OrderNumber</th>
+                        <th>ReachedTime</th>
+                        <th>Reasone</th>
+                        <th ng-if="Grid_DetailsDS[0].Type == 'TotalCancelled'">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+
+                    <tr ng-repeat="p in Grid_DetailsDS" ng-class="{'success': p.CancelStatus == 'OnTime' ,'danger': p.CancelStatus == 'Late' }">
+                        <td>{{$index+1}} </td>
+                        <td><b title="{{p.PhleboId}}">{{p.PhleboName}}</b> </td>
+                        <td>
+                            <center>
+                               <img src="../Images/phone icon.png"  alt="" title="{{p.PhleboMobileNo}}" style="height: 20px; cursor: pointer; width: 20px" ng-click="send_parameters('22149',p.PhleboMobileNo)">
+                           </center>
+                        </td>
+                        <td>{{p.customer_name}} </td>
+                        <td>
+
+                            <center>
+                            <img src="../Images/Web-icon.png" alt="" title="{{p.CustomerMobileNo}}" style="height: 20px; cursor: pointer; width: 20px" ng-click="send_parameters('22149',p.CustomerMobileNo )">
+                                  </center>
+
+                        </td>
+                        <td>{{p.pickupaddress}} 
+                       
+
+                        </td>
+                        <td>{{p.pickuptime}} </td>
+
+                        <td>{{p.OrderNumber}} </td>
+                        <td>{{p.ReachedTime}} </td>
+                        <td>{{p.Reasone}} </td>
+
+                        <td ng-if="p.Type == 'TotalCancelled'">{{p.CancelStatus}} 
+                             <div ng-if="p.CancelStatus == 'Late'">
+                                 <img style="width: 20px; height: 20px;" src="imgMap/status/rad.png" />
+                             </div>
+                        </td>
+
+
+
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <div class="row" ng-if="points.length>0 || Grid_DetailsDS.length>0">
+
+                <div style="width: 100%; position: absolute">
+                    <header class="main-header">
+                        <div style="height: 40px; background-color: #e4f0f0; z-index: 10000" class="col-lg-12">
+                            <div>
+                                <table width="100%">
+                                    <tr>
+                                        <td align="center" valign="middle">
+                                            <iframe id="ifrm" runat="server" clientidmode="Static" width="100%" style="border: none; overflow: hidden" height="45px"></iframe>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </header>
+                </div>
+            </div>
+            <br />
+            <br />
+            <br />
+
+        </div>
+
+
+
+        <!-- Modal -->
+        <div id="modalorderdetails" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Order Details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-hover">
+
+                            <thead>
+
+
+                                <tr class="danger">
+                                    <th>SrNo.</th>
+                                    <th>Phlebo</th>
+                                    <th>customer_name</th>
+                                    <th>CustomerMobileNo</th>
+                                    <th>PickUpStatus</th>
+                                    <th>order number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="p in Cus_Details" class="info">
+                                    <td>{{$index+1}} </td>
+                                    <td>{{p.PhleboName}} </td>
+                                    <td>{{p.customer_name}} </td>
+                                    <td>
+
+                                        <center>
+                            <img src="../Images/Web-icon.png" alt="" title="{{p.CustomerMobileNo}}" style="height: 20px; cursor: pointer; width: 20px" ng-click="send_parameters('22149',p.CustomerMobileNo )">
+                                  </center>
+
+                                    </td>
+                                    <td>{{p.PickUpStatus}} </td>
+                                    <td>{{p.o_number}} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="Modal_philbo_timing" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+
+                            <b>History</b></h4>
+
+                        <br />
+
+                        <%--    <input type="button" class="btn btn-primary text-left" value="{{btnhistoryStarttxt}}" ng-click="historyStart_click()" />--%>
+
+
+                        <div class="modal-body">
+
+                            <div class="col-md-12">
+                                <ng-map id="maptiming" center="[{{history_DetailsDS[0].lat}},{{history_DetailsDS[0].lng}}]" style="height: 500px;" zoom="11" scroll="true">
+
+
+                                      <marker   id="timingorgstart" icon="{{Homeicon11}}"  position="{{history_DetailsDS[0].lat}},{{history_DetailsDS[0].lng}}" on-click="Get_address_latlong(event,history_DetailsDS[0].lat,history_DetailsDS[0].lng,history_DetailsDS[0].TrackDateTime)"></marker>
+
+                                    
+
+                                         <marker   id="timingorgend" icon="{{byke_history}}"  position="{{history_DetailsDS[history_DetailsDS.length-1].lat}},{{history_DetailsDS[history_DetailsDS.length-1].lng}}" on-click="Get_address_latlong(event,history_DetailsDS[history_DetailsDS.length-1].lat,history_DetailsDS[history_DetailsDS.length-1].lng,history_DetailsDS[history_DetailsDS.length-1].TrackDateTime)"></marker>
+
+                                   
+                                   <%-- <div ng-repeat="x in history_DetailsDS">
+                                        <custom-marker  id="lbllateP122" position="{{x.lat}},{{x.lng}}">
+						<div><b style="color:red;">*</b>  </div>
+					</custom-marker>
+                                    </div>--%>
+                                    
+
+                                    
+                                     
+
+
+                                    <div ng-repeat="p in Allocated_path[0]" >
+                                        <marker ng-if="$index==0"   id="timingstart_home" icon="{{Homeicon2}}"  position="{{p.lat}},{{p.lng}}" ></marker>
+                                       <%-- <marker ng-if="$index > 0 && $index < Allocated_path[0].length-1"   id="timingstart" icon="{{historyicon}}"  position="{{p.lat}},{{p.lng}}" ></marker>--%>
+                                         <marker ng-if="$index == Allocated_path[0].length-1"   id="timingstart_ofc" icon="{{officeicon1}}"  position="{{p.lat}},{{p.lng}}" ></marker>
+
+
+
+
+                                          <div ng-if="$index > 0 && $index < Allocated_path[0].length-1 && p.PickUpStatus == 'OnGoing'">
+                      <marker title="P{{$index+1}}"   id="h_OnGoing" icon="{{OnGoing[1]}}"  position="{{p.lat}}, {{p.lng}}"></marker>
+                 </div>
+                 <div ng-if="$index > 0 && $index < Allocated_path[0].length-1 && p.PickUpStatus == 'Completed'">
+                    
+                      <marker title="P{{$index+1}}"   id="h_Completed" icon=" {{Completed[1]}}"  position="{{p.lat}}, {{p.lng}}" ></marker>
+                 </div>
+                 <div ng-if="$index > 0 && $index < Allocated_path[0].length-1 && p.PickUpStatus == 'NotCmpleted'">
+                      <marker title="P{{$index+1}}"   id="h_NotCmpleted" icon="{{NotCmpleted[1]}}"  position="{{p.lat}}, {{p.lng}}" ></marker>
+                 </div>
+                 <div ng-if="$index > 0 && $index < Allocated_path[0].length-1 && p.PickUpStatus == 'Cancelled'">
+                      <marker title="P{{$index+1}}"   id="h_Cancelled" icon="{{Cancelled[1]}}"  position="{{p.lat}}, {{p.lng}}" ></marker>
+                 </div>
+                <div ng-if="$index > 0 && $index < Allocated_path[0].length-1 && p.PickUpStatus == 'Reschedule'">
+                      <marker title="P{{$index+1}}"   id="h_Cancelled" icon="{{Reschdule[1]}}"  position="{{p.lat}}, {{p.lng}}" ></marker>
+                 </div>
+
+
+                                        <custom-marker ng-if="$index > 0 && $index < Allocated_path[0].length-1" id="lblp_Alloc" position="{{p.lat}}, {{p.lng}}">
+						<div><b  style="color:000099"><h5>{{$index}}</h5></b>  </div>
+					</custom-marker>
+
+                                    </div>
+                                     
+                   <%-- <marker   id="timingend" icon="{{Homeicon11}}"  position="{{Allocated_path[0][Allocated_path[0].length-1].lat}},{{Allocated_path[0][Allocated_path[0].length-1].lng}}" ></marker>--%>
+
+                                  
+
+                                    <div>
+
+
+                                
+
+             <shape name="polyline" id="foo" stroke-color="#cc0000"  
+        icons="[{
+         icon: {
+           path: 'FORWARD_CLOSED_ARROW',
+           scale: 7,
+           strokeColor: '#cc0000'
+         },
+         offset: '100%'
+       }]"
+       path="{{Running_detail}}" >
+                 
+     </shape>
+
+
+
+
+
+<%--                                       <shape name="polyline" id="foo" stroke-color="#cc0000" 
+       icons="[{
+         icon: {
+           path: 'FORWARD_CLOSED_ARROW',
+           scale: 7,
+           strokeColor: '#cc0000'
+         },
+         offset: '100%'
+       }]"
+       path="{{Running_detail}}">
+     </shape>
+--%>
+
+                                          </div>
+
+
+                             <shape name="polyline" 
+      path="{{history_DetailsDS}}"
+      geodesic="true"
+      stroke-color="#FF0000"
+      stroke-opacity="1.0"
+      stroke-weight="2">
+    </shape>
+
+                                    <shape name="polyline" 
+      path="{{Allocated_path[0]}}"
+      geodesic="true"
+      stroke-color="#000099"
+      stroke-opacity="1.0"
+      stroke-weight="2">
+    </shape>
+                           
+                            
+                             </ng-map>
+                            </div>
+
+
+
+
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <div class="panel-body">
+                            </div>
+                        </div>
+
+                        <br />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+
+                            <b>customer name</b> {{selected_point.customer_name}}</h4>
+                        <br />
+                        <p>
+                            <b>Philbo:</b>{{selected_point.PhleboName}}
+                           
+
+                            {{selected_point.lat}},{{selected_point.logi}},-, {{selected_point.a_geo_latitude}},{{selected_point.a_geo_longitude}}
+                        </p>
+
+
+                        <div class="modal-body">
+                            <div class="col-md-3">
+                                <div id="directionspanel" style="width: 100%; float: left; height: 500px; overflow-x: scroll; overflow-y: scroll; padding: 0px 5px">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <ng-map id="mapdirection" center="[{{selected_point.a_geo_latitude}},{{selected_point.a_geo_longitude}}]" style="height: 500px;" zoom="15" scroll="true">
+                          
+                            <marker   id="livehome" icon="{{Homeicon2}}"  position="{{selected_point.a_geo_latitude}},{{selected_point.a_geo_longitude}}" on-click="liveorderDetails(event)" ></marker>
+
+                            <marker   id="livebike" icon="{{Direction_Byke}}"  position="{{selected_point.lat}},{{selected_point.logi}}" on-click="livebykeDetails(event)" ></marker>
+
+
+                            <directions  polyline-options='{strokeColor: "blue"}' travel-mode="DRIVING" panel="directionspanel" 
+                  avoid-ferries="true draggable="true"  suppress-markers="true" origin="{{selected_point.lat}},{{selected_point.logi}}" destination="{{selected_point.a_geo_latitude}},{{selected_point.a_geo_longitude}}"></directions>
+
+
+                            
+
+                            <info-window id="livebykeDetails" >
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContent5">
+          <p>
+            <b>PhleboName : {{selected_point.PhleboName}} </b>
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+                            
+                            <info-window id="liveorderDetails" >
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContent4">
+          <p>
+            <b> Name  : {{selected_point.customer_name}} </b><br />
+              <b> Address : {{selected_point.pickupaddress}} </b>
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+
+                             <info-window id="oneorderDetails">
+      <div ng-non-bindable>
+        <h4></h4>
+
+          <div id="bodyContent1">
+          <p>
+           
+          <b>Pickup Address:</b> {{selectedCity.pickupaddress}} <br />
+                             <b>pickuptime : </b>{{selectedCity.pickuptime}} <br />
+
+              </p>
+           
+               
+
+        </div>
+
+      </div> 
+    </info-window>
+
+
+
+                            <info-window id="onebykeDetails">
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContent2">
+          <p>
+            <b>phlebo : </b>{{selectedPhlibo.PhleboName}}<br />
+              <b>PhleboDateTime : </b>{{selectedPhlibo.PhleboDateTime}}<br />
+              <b>{{GetAddress_lat_long}}</b>
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+                             <info-window id="officeDetails1">
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContentofc1">
+          <p>
+            <b>Hindustan Wellness </b>Building No 107, Sector 44, Gurugram, Haryana 122003
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+       <info-window id="officeDetails2">
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContentofc2">
+          <p>
+            <b>Hindustan Wellness </b>F-17 Vikas Marg, Preet Vihar, New Delhi, India,110092 
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+      <info-window id="officeDetails3">
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContentofc3">
+          <p>
+            <b>Hindustan Wellness Meerut S2S Aspire, Garh Road. Meerut, India, 250004  </b>
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+
+                                     <info-window id="AddressLatLongDetails">
+      <div ng-non-bindable>
+        <h4></h4>         
+
+          <div id="bodyContentadd">
+          <p>
+
+               <b>Track DateTime:  </b> {{TrackDateTime_h}} <br />
+            <b>{{GetAddress_lat_long}} </b>
+          
+              </p>
+           
+        </div>
+
+      </div> 
+    </info-window>
+
+
+
+
+
+                </ng-map>
+                            </div>
+
+
+
+                            <br />
+                            <br />
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <div class="panel-body">
+
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="danger">
+
+                                            <th>duration</th>
+                                            <th>distance</th>
+                                            <th>origin addresses</th>
+                                            <th>destination addresses</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="info">
+
+                                            <td>{{duration}}</td>
+                                            <td>{{distance}} </td>
+                                            <td>{{origin_addresses}} </td>
+                                            <td>{{destination_addresses}} </td>
+
+
+
+
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <br />
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    <script src="angular/Tracker.js"></script>
+
+</body>
+
+</html>
+
+<script>
+
+
+
+
+</script>
