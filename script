@@ -1,0 +1,643 @@
+  <script type="text/javascript">
+
+        function call_function() {
+            initialize();
+            initialize1();
+        }
+
+        function initialize() {
+
+            var options = {
+                types: ['(regions)'],
+                componentRestrictions: { country: "in" }
+            };
+
+            var input = document.getElementById('txtcpageoaddress');
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+
+        function initialize1() {
+
+            var options = {
+                types: ['(regions)'],
+                componentRestrictions: { country: "in" }
+            };
+
+            var input = document.getElementById('txtgeoaddress');
+            var autocomplete = new google.maps.places.Autocomplete(input, options);
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+        google.maps.event.addDomListener(window, 'load', initialize1);
+
+        function Myorder_modify_Close() {
+            //var spanorder = document.getElementsByClassName("close_order_history")[0];
+            var modalreport = document.getElementById("myModal_OrderEdit");
+            modalreport.style.display = "none";
+            //$scope.Get_Order_for_Verification();
+        }
+
+        function order_history_pop_close_ib() {
+            //var spanorder = document.getElementsByClassName("close_order_history")[0];
+            var modalorder = document.getElementById("myModal_order_history");
+            modalorder.style.display = "none";
+        }
+
+        function order_history_pop_close_ib1() {
+            //var spanorder = document.getElementsByClassName("close_order_history")[0];
+            var modalorder = document.getElementById("Div_Show");
+            modalorder.style.display = "none";
+        }
+        function order_history_pop_close_ib2() {
+            var modalorder = document.getElementById("Latitude_Popup");
+            modalorder.style.display = "none";
+        }
+
+        function Get_details_popup(iddiv) {
+            var popid = iddiv.split('#')[2];
+            document.getElementById(popid).style.display = 'block';
+        }
+
+        function Get_details_popup_off(iddiv) {
+            var popid = iddiv.split('#')[2];
+            document.getElementById(popid).style.display = 'none';
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function div_click(ev) {
+            alert(ev.target.id);
+        }
+
+        //        function drop(ev) {
+
+        //            //alert('Ashu');
+        //            ev.preventDefault();
+        //            var data = ev.dataTransfer.getData("text");
+        //            alert(data);
+        //            ev.target.appendChild(document.getElementById(data));
+        //            var target = ev.target || ev.srcElement;
+        //            var id = target.id;
+        //            //alert(id + '#' + data);
+
+        //            PageMethods.Update_Details(id + '#' + data, onSucess, onError);
+
+        //            function onSucess(result) {
+        //                //alert(result);
+        //                document.getElementById('btn_click').click();
+        //            }
+
+        //            function onError(result) {
+        //                alert('Cannot process your request.');
+        //                document.getElementById('btn_click').click();
+        //            }
+        //        }
+
+        $(document).keydown(function (event) {
+            if (event.which == "17")
+                cntrlIsPressed = true;
+        });
+
+        $(document).keyup(function () {
+            cntrlIsPressed = false;
+        });
+        var cntrlIsPressed = false;
+        function ShowPopup(id) {
+            if (cntrlIsPressed) {
+                angular.element(document.getElementById('DivAppConrtol')).scope().Set_allert(id);
+            }
+            else {
+                angular.element(document.getElementById('DivAppConrtol')).scope().Get_Order_for_Verification1(id)
+                //                document.getElementById("order_id").value = id;
+                //                document.getElementById("call_function").click();
+            }
+        }
+
+        function add_route(id) {
+            angular.element(document.getElementById('DivAppConrtol')).scope().add_route(id);
+        }
+
+        function delete_route(id) {
+            angular.element(document.getElementById('DivAppConrtol')).scope().delete_route(id);
+        }
+
+        var leftOffset = parseInt($("#header").css('left'));
+        $(window).scroll(function () {
+            $('#header').css({
+                'left': $(this).scrollLeft() + leftOffset
+            });
+        });
+
+    </script>
+    <script type="text/javascript">
+
+
+        function send_parameters(agent_id, phn) {
+            var regId1 = document.getElementById("hdnCNumber").value; // phn.replace('imgbtn_phno', 'hdMobileNoforgrid');
+            //var regId2 = phn.replace('imgbtn_phno', 'lbl_CusName');
+            //var regId3 = phn.replace('imgbtn_phno', 'lbl_Email');
+            //document.getElementById("txtNumber").value = document.getElementById(regId1).value;
+            //document.getElementById("hdnCNumber").value = document.getElementById(regId1).value;
+            //document.cookie = "Number=" + document.getElementById(regId1).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            //if (document.getElementById(regId2) != null && document.getElementById(regId2) != "undefined") {
+            //    document.getElementById("txtName").value = document.getElementById(regId2).innerText;
+            //    document.getElementById("txtCName").value = document.getElementById(regId2).innerText;
+            //    document.cookie = "Name=" + document.getElementById(regId2).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            //}
+            //if (document.getElementById(regId3) != null && document.getElementById(regId3) != "undefined") {
+            //    document.getElementById("txt_Email").value = document.getElementById(regId3).innerText;
+            //}
+            //else {
+            //    document.getElementById("txt_Email").value = "";
+            //}
+            agent_id = document.getElementById('DialerID').value;
+            var HostIP = document.getElementById('HostIP').value;
+            $.ajax({
+                type: 'POST',
+                url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=' + HostIP + '&phone_num=' + regId1 + '&resFormat=1',
+                //url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=192.168.1.20&phone_num=8510910308&resFormat=1',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    // alert('got here with data');
+                },
+                error: function () {
+                    //alert('something bad happened');
+                }
+            });
+        }
+
+        function send_Alt_parameters(agent_id, phn) {
+            var regId1 = phn.replace('imgAltbtn_phno', 'hdAltMobileNoforgrid');
+            var regId2 = phn.replace('imgAltbtn_phno', 'lbl_CusName');
+            var regId3 = phn.replace('imgAltbtn_phno', 'lbl_Email');
+            document.getElementById("txtNumber").value = document.getElementById(regId1).value;
+            document.getElementById("hdnCNumber").value = document.getElementById(regId1).value;
+            document.cookie = "Number=" + document.getElementById(regId1).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            if (document.getElementById(regId2) != null && document.getElementById(regId2) != undefined) {
+                document.getElementById("txtName").value = document.getElementById(regId2).innerText;
+                document.getElementById("txtCName").value = document.getElementById(regId2).innerText;
+                document.cookie = "Name=" + document.getElementById(regId2).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            }
+            if (document.getElementById(regId3) != null && document.getElementById(regId3) != undefined) {
+                document.getElementById("txt_Email").value = document.getElementById(regId3).innerText;
+            }
+            agent_id = document.getElementById('DialerID').value;
+            var HostIP = document.getElementById('HostIP').value;
+            $.ajax({
+                type: 'POST',
+                url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=' + HostIP + '&phone_num=' + document.getElementById(regId1).value + '&resFormat=1',
+                //url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=192.168.1.20&phone_num=8510910308&resFormat=1',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    // alert('got here with data');
+                },
+                error: function () {
+                    //alert('something bad happened');
+                }
+            });
+        }
+        function send_Serv_parameters(agent_id, phn) {
+            var regId1 = phn.replace('imgServbtn_phno', 'hdServMobileNoforgrid');
+            //            var regId2 = phn.replace('imgServbtn_phno', 'lbl_CusName');
+            //            var regId3 = phn.replace('imgServbtn_phno', 'lbl_Email');
+            //            document.getElementById("txtNumber").value = document.getElementById(regId1).value;
+            //            document.getElementById("hdnCNumber").value = document.getElementById(regId1).value;
+            //            document.cookie = "Number=" + document.getElementById(regId1).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            //            if (document.getElementById(regId2) != null && document.getElementById(regId2) != undefined) {
+            //                document.getElementById("txtName").value = document.getElementById(regId2).innerText;
+            //                document.getElementById("txtCName").value = document.getElementById(regId2).innerText;
+            //                document.cookie = "Name=" + document.getElementById(regId2).value + ";expires=Fri, 27 Dec 2020 23:59:59 GMT;";
+            //            }
+            //            if (document.getElementById(regId3) != null && document.getElementById(regId3) != undefined) {
+            //                document.getElementById("txt_Email").value = document.getElementById(regId3).innerText;
+            //            }
+            agent_id = document.getElementById('DialerID').value;
+            var HostIP = document.getElementById('HostIP').value;
+            $.ajax({
+                type: 'POST',
+                url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=' + HostIP + '&phone_num=' + document.getElementById(regId1).value + '&resFormat=1',
+                //url: 'http://192.168.1.212/apps/appsHandler.php?transaction_id=CTI_DIAL&agent_id=' + agent_id + '&ip=192.168.1.20&phone_num=8510910308&resFormat=1',
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    // alert('got here with data');
+                },
+                error: function () {
+                    //alert('something bad happened');
+                }
+            });
+        }
+        function oncload() {
+            document.body.style.display = "block";
+            if (getCookie("Number") != null && getCookie("Number") != "undefined") {
+                document.getElementById("txtNumber").value = getCookie("Number");
+                document.getElementById("hdnCNumber").value = getCookie("Number");
+                Mobile();
+            }
+            else {
+                document.getElementById("rdB").className = "rdbtn";
+                document.getElementById("txtCName").value = "Waiting for Call";
+            }
+            if (getCookie("Name") != null && getCookie("Name") != "undefined") {
+                document.getElementById("txtName").value = getCookie("Name");
+                document.getElementById("txtCName").value = getCookie("Name");
+            }
+            else {
+                document.getElementById("txtCName").value = "Waiting for Call";
+            }
+            var PageURL = window.location.href;
+            if (PageURL.search("bookingform.aspx") != -1) {
+                document.getElementById('OpenOrder').style.display = "none";
+                document.getElementById('SaveDispo').style.display = "";
+                if (getCookie("Number") != "" && getCookie("Number") != undefined) {
+                    document.getElementById('ctl00_ContentPlaceHolder1_book_order_tab_book_order_TabPanel1_txtmobileno').value = getCookie("Number");
+                    document.getElementById('ctl00_ContentPlaceHolder1_book_order_tab_book_order_TabPanel2_txtmobileno_newmember').value = getCookie("Number");
+                    ShowBookNumber();
+                    ShowMemberNo();
+                }
+            }
+        }
+        function getCookie(name) {
+            var value = "; " + document.cookie;
+            var parts = value.split("; " + name + "=");
+            if (parts.length == 2) return parts.pop().split(";").shift();
+        }
+        function deleteCookie() {
+            document.cookie = 'Name=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            document.cookie = 'Number=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+        function NavigateOrder() {
+            if (document.getElementById('btnBookOrder').checked == true) {
+                document.getElementById('OpenOrder').style.display = "none";
+                document.getElementById('SaveDispo').style.display = "";
+                document.getElementById('hdnHideSave').value = "1";
+                var txtCName = document.getElementById('txtCName').value;
+                window.location.href = "bookingform.aspx?CName=" + txtCName;
+            }
+        }
+        function onCheckChange() {
+            pop('popDiv');
+            if (document.getElementById('btnHotLead').checked == true) {
+                document.getElementById('Dispo').value = "Hot_Lead";
+            }
+            else if (document.getElementById('btnFollowup').checked == true) {
+                document.getElementById('Dispo').value = "Follow_Up";
+            }
+            else if (document.getElementById('btnCallBack').checked == true) {
+                document.getElementById('Dispo').value = "Call_Back";
+            }
+        }
+        function popup_Package() {
+            window.open('View_Package_Test_Master_popup.aspx', 'Building-Form', 'width=1000,height=550,top=110,left=200,scrollbars=1,resizable=1');
+        }
+        function popup_Package2() {
+            window.open('View_promocede_code.aspx', 'Building-Form', 'width=1000,height=550,top=110,left=200,scrollbars=1,resizable=1');
+        }
+        function OpenNotepad() {
+            window.open('Snippet.aspx', 'Building-Form', 'width=1000,height=550,top=110,left=200,scrollbars=1,resizable=1');
+        }
+        function OpenOffline() {
+            window.open('Offline_CRM.aspx');
+        }
+
+
+        $(document).keydown(function (event) {
+            if (event.which == "17")
+                cntrlIsPressed = true;
+        });
+
+        $(document).keyup(function () {
+            cntrlIsPressed = false;
+        });
+
+        var cntrlIsPressed = false;
+
+        function drop(ev) {
+            if (cntrlIsPressed) {
+                var orderid = "";
+                orderid = $("#hdnorderID").val();
+                if (orderid != "") {
+                    //angular.element(document.getElementById('DivAppConrtol')).scope().save_data_data_base_Disposition(orderid, 1);
+                    $("#hdnorderID").val("");
+                    $("#hdlatitude").val("");
+                    $("#hdlongitude").val("");
+                    $("#hdnumber_of_pickup").val("");
+                }
+                angular.element(document.getElementById('DivAppConrtol')).scope().Update_Details(ev);
+            }
+        }
+
+        function get_windows_heights() {
+            var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+            var w = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            // alert(h)
+
+            document.getElementById('style-3').style.height = h + "px";
+
+            document.getElementById('style-3_1').style.height = h + "px";
+           // document.getElementById('style-3_1').style.height = 715 + "px";
+            document.getElementById('style-3_1').style.width = w + "px";
+
+            call_function();
+        }
+
+
+        function resetPosition(object, args) {
+            var tb = object._element;
+            var tbposition = findPositionWithScrolling(tb);
+            var bodyRect = document.body.getBoundingClientRect(),
+                elemRect = document.getElementById("ESrIco").getBoundingClientRect(),
+                offset = elemRect.left - bodyRect.left;
+            var xposition = offset;
+            var yposition = tbposition[1] + 40; // 22 textbox height 
+            var ex = object._completionListElement;
+            if (ex)
+                $common.setLocation(ex, new Sys.UI.Point(xposition, yposition));
+        }
+
+
+        function findPositionWithScrolling(oElement) {
+            if (typeof (oElement.offsetParent) != 'undefined') {
+                var originalElement = oElement;
+                for (var posX = 0, posY = 0; oElement; oElement = oElement.offsetParent) {
+                    posX += oElement.offsetLeft;
+                    posY += oElement.offsetTop;
+                    if (oElement != originalElement && oElement != document.body && oElement != document.documentElement) {
+                        posX -= oElement.scrollLeft;
+                        posY -= oElement.scrollTop;
+                    }
+                }
+                return [posX, posY];
+            }
+            else {
+                return [oElement.x, oElement.y];
+            }
+        }
+
+
+        jQuery(function ($) {
+            $('#style-3_1').on('scroll', function () {
+                if ($(this).scrollLeft()) {
+                    document.getElementById("left_td").className = "left_td_fix";
+                    //document.getElementById("fix_table").removeAttribute("style");
+                    document.getElementById("tr_mar").setAttribute('style', 'margin-left: 30px;');
+                    document.getElementById("mt_table").removeAttribute("style");
+                }
+                else {
+                    document.getElementById("left_td").className = "left_td_move";
+                    document.getElementById("fix_table").setAttribute('style', 'position: fixed;margin-left: 30px;');
+                    document.getElementById("tr_mar").setAttribute('style', 'margin-left: 0px;');
+                    // document.getElementById("mt_table").setAttribute('style', 'margin-top:30px;');
+                }
+            })
+        });
+
+
+        function myFunction() {
+            var div = document.getElementById('style-3_1');
+
+            //alert("asdf");
+            //            var div = document.getElementById('style-3_1');
+            //            //div.scrollTop = div.scrollHeight - div.clientHeight;
+            //            //div.scrollLeft = div.scrollWidth - div.clientWidth;
+            //            if ((div.scrollHeight - div.clientHeight) > (div.scrollHeight + 100)) 
+            //            {
+            //                alert(div.scrollHeight);
+            //            }
+            ////            if (div.scrollLeft > 100) 
+            ////            {
+            ////                alert('bbb');
+            ////            }
+        }
+    </script>
+    <script type="text/javascript">
+        var isNS = (navigator.appName == "Netscape") ? 1 : 0;
+
+        if (navigator.appName == "Netscape") document.captureEvents(Event.MOUSEDOWN || Event.MOUSEUP);
+
+        function mischandler() {
+            return false;
+        }
+
+        function mousehandler(e) {
+            var myevent = (isNS) ? e : event;
+            var eventbutton = (isNS) ? myevent.which : myevent.button;
+            if ((eventbutton == 2) || (eventbutton == 3)) return false;
+        }
+        document.oncontextmenu = mischandler;
+        document.onmousedown = mousehandler;
+        document.onmouseup = mousehandler;
+        function Entertabfun(event) {
+            var key = event.keyCode ? event.keyCode : event.which;
+            document.onkeydown = function (e) {
+                if (e != undefined) {
+                    if (e.ctrlKey && e.keyCode === 67) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (e.button === 2) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    if (e.keyCode >= 112 && e.keyCode <= 123) {
+                        e.preventDefault();
+                    }
+                    if ((e.ctrlKey && e.keyCode == 86) || (e.ctrlKey && e.keyCode == 70)) {
+                        return true;
+                    }
+                    else if (e.ctrlKey) {
+                        return false;
+                    }
+                }
+                document.addEventListener("contextmenu", function (e) {
+                    e.preventDefault();
+                }, false);
+                document.addEventListener("beforeunload", function (e) {
+                    e.preventDefault();
+                }, false);
+            }
+        }
+        Object.defineProperty(console, '_commandLineAPI',
+            { get: function () { throw 'Nooo!' } })
+    </script>
+    <script type="text/javascript">
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-center",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+
+
+        function Enabletxt() {
+            if (document.getElementById("rb_pickupaddress").checked == true) {
+                document.getElementById("divid").style.display = 'none';
+            }
+            else {
+                document.getElementById("divid").style.display = 'block';
+                document.getElementById("rfv_pincode").enabled = true;
+            }
+        }
+
+    </script>
+    <style type="text/css">
+        .loading {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            opacity: 0.4;
+            background: url(LoderImage/loader-64x/Preloader_2.gif) center no-repeat #fff;
+        }
+    </style>
+    <script type="text/javascript">
+        function initialize3() {
+            var address = (document.getElementById('pac-input'));
+            var autocomplete = new google.maps.places.Autocomplete(address);
+            autocomplete.setTypes(['geocode']);
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    return;
+                }
+
+                var address = '';
+                if (place.address_components) {
+                    address = [
+                        (place.address_components[0] && place.address_components[0].short_name || ''),
+                        (place.address_components[1] && place.address_components[1].short_name || ''),
+                        (place.address_components[2] && place.address_components[2].short_name || '')
+                    ].join(' ');
+                }
+                /*********************************************************************/
+                /* var address contain your autocomplete address *********************/
+                /* place.geometry.location.lat() && place.geometry.location.lat() ****/
+                /* will be used for current address latitude and longitude************/
+                /*********************************************************************/
+                document.getElementById("lat").value = place.geometry.location.lat();
+                document.getElementById("longi").value = place.geometry.location.lng();
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize3);
+
+    </script>
+    <script type="text/javascript">
+        var geocoder;
+        var map;
+        var infowindow = new google.maps.InfoWindow();
+        var marker;
+        function initialize3() {
+            geocoder = new google.maps.Geocoder();
+            var latlng = new google.maps.LatLng(40.730885, -73.997383);
+            var mapOptions = {
+                zoom: 8,
+                center: latlng,
+                mapTypeId: 'roadmap'
+            }
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+            google.maps.event.addListener(map, "click", function (evt) {
+                geocoder.geocode({ 'latLng': evt.latLng }, processRevGeocode);
+            });
+        }
+
+        function codeLatLng() {
+            var input = document.getElementById('latlng').value;
+            var latlngStr = input.split(',', 2);
+            var lat = parseFloat(latlngStr[0]);
+            var lng = parseFloat(latlngStr[1]);
+            var latlng = new google.maps.LatLng(lat, lng);
+            geocoder.geocode({ 'latLng': latlng }, processRevGeocode);
+        }
+
+
+
+        function processRevGeocode(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                var result;
+                if (results.length > 1)
+                    result = results[1];
+                else
+                    result = results[0];
+                if (result.geometry.viewport)
+                    map.fitBounds(result.geometry.viewport);
+                else if (result.geometry.bounds)
+                    map.fitBounds(result.geometry.bounds);
+                else {
+                    map.setCenter(result.geometry.location);
+                    map.setZoom(11);
+                }
+                if (marker && marker.setMap) marker.setMap(null);
+                marker = new google.maps.Marker({
+                    position: result.geometry.location,
+                    map: map
+                });
+                infowindow.setContent(results[1].formatted_address);
+                infowindow.open(map, marker);
+                displayPostcode(results[0].address_components);
+                // displayArea(results[0].address_components);
+
+            } else {
+                alert('Geocoder failed due to: ' + status);
+            }
+        }
+
+        function displayPostcode(address) {
+            for (p = address.length - 1; p >= 0; p--) {
+                if (address[p].types.indexOf("postal_code") != -1) {
+                    var asd = address[p].long_name;
+                    //alert(asd);
+                    document.getElementById("postcode").value = asd;
+                }
+
+                if (address[p].types.indexOf("administrative_area_level_2") != -1) {
+                    var asds = address[p].long_name;
+                    //alert(asds);
+                    document.getElementById("txt_Area").value = asds;
+                }
+            }
+        }
+
+        function codeAddress() {
+            var address = document.getElementById('pac-input').value;
+            initialize3();
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    map.setCenter(results[0].geometry.location);
+                    if (marker && marker.setMap) marker.setMap(null);
+                    marker = new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location
+                    });
+                    geocoder.geocode({ 'latLng': results[0].geometry.location }, processRevGeocode);
+                }
+                else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize3);
+
+    </script>
